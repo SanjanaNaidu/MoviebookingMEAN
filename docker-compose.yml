@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Maps port 5000 on the host to port 5000 in the container
+    environment:
+      - MONGODB_PASSWORD=PASS
+      - PORT=5000
+      - SECRET_KEY=SECRET
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./movies
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"  # Maps port 3000 on the host to port 80 in the container
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_PASSWORD=PASS
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
